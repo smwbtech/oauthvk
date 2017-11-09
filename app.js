@@ -1,4 +1,7 @@
-const express = require('express');
+const express = require('express'),
+      passport = require('passport'),
+      passportStrategies = require('../passport/passport.js'),
+      VKontakteStrategy = require('passport-vkontakte').Strategy;
 
 let app = express();
 
@@ -6,7 +9,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'pug');
 
 app.get('/', (req, res) => {
-    res.render('index', {title: 'Index Page', messageHeader: 'Hello world!', messageText: 'This is my test express app'});
+    res.render('index');
 });
 
 app.use(express.static(__dirname + '/public'));
