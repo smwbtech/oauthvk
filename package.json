@@ -1,0 +1,28 @@
+{
+  "name": "oauth",
+  "version": "0.1.0",
+  "description": "oauth vk test task",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smwbtech/oauthvk.git"
+  },
+  "keywords": [
+    "oauth"
+  ],
+  "author": "Roman Privalov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smwbtech/oauthvk/issues"
+  },
+  "homepage": "https://github.com/smwbtech/oauthvk#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "passport": "^0.4.0",
+    "passport-vkontakte": "^0.3.2",
+    "pug": "^2.0.0-rc.4"
+  }
+}
