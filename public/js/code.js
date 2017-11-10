@@ -10,8 +10,15 @@ window.onload = () => {
     else {
         let formData = new FormData();
         formData.append('accessToken', localStorage.accessToken);
+        formData.append('profile', localStorage.profile);
         fetch('/authorized', {method: 'post', body: formData})
-        .then( (res) => console.log(res))
+        .then( (res) => {
+            res.text()
+            .then( (html) => {
+                let divContent = document.getElementById('content');
+                content.innerHTML = html;
+            })
+        })
         .catch( (err) => console.log(err));
     }
 

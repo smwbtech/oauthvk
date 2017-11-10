@@ -29,7 +29,7 @@ passport.use(new VKontakteStrategy(
     clientSecret: 'L21nWQJckiAE0PzdHsD8',
     callbackURL: 'http://localhost:3000/auth/vk/callback',
     scope: ['email'],
-    profileFields: ['email'],
+    profileFields: ['email,photo_200_orig'],
   },
   function verify(accessToken, refreshToken, params, profile, done) {
 
@@ -61,6 +61,7 @@ app.use(require('express-session')({ secret: 'put the secret here' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+//Обрабатываем маршруты
 app.get('/', (req, res) => {
     res.render('index');
 });
@@ -69,31 +70,56 @@ app.get('/auth/vk', passport.authenticate('vkontakte'));
 
 app.get('/auth/vk/callback',
   passport.authenticate('vkontakte', { failureRedirect: '/error' }),
-  function(req, res) {
+  (req, res) => {
     console.log('Авторизовались!');
-    console.log(req.user) //пользователь
-    res.render('logged', req.user);
+    // Cохраним объект пользователя и токен в переменной окружения, в реальном проекте будем сохранять в БД
+    process.env.VK_USER = JSON.stringify(req.user.profile);
+    process.env.VK_ACCESS_TOKEN = req.user.accessToken;
+    console.log(JSON.parse(process.env.VK_USER));
+    res.status(301).redirect('/logged');
   });
+
+  app.get('/logged', (req, res, err) => {
+      if(err) console.log(err)
+      let vkapi = new Vkapi({
+          accessToken: process.env.VK_ACCESS_TOKEN,
+      });
+      vkapi.call('friends.get', {
+          order: 'random',
+          count: 5,
+          fields: 'nickname,domain,photo_50'
+      })
+      .then( (friends) => {
+          console.log(friends);
+          res.render('logged', {
+              redirect: true,
+              profile: process.env.VK_USER,
+              accessToken: process.env.VK_ACCESS_TOKEN,
+              friends: friends});
+      })
+      .catch( (err) => console.log(err));
+      //Удалим объект пользователя и токен из переменной окружения
+  })
 
   app.post('/authorized', upload.array(), (req, res, err) => {
       if(err) console.log(err);
-      console.log(req.body);
       let token = req.body.accessToken,
           vkapi = new Vkapi({
               accessToken: token,
           });
 
-          //TODO: получить список друзей пользователя!
           vkapi.call('friends.get', {
               order: 'random',
               count: 5,
               fields: 'nickname,domain,photo_50'
           })
-          .then( (friends) => console.log(friends))
+          .then( (friends) => {
+              res.render('authorized', {
+                  profile: process.env.VK_USER,
+                  accessToken: process.env.VK_ACCESS_TOKEN,
+                  friends: friends});
+          })
           .catch( (err) => console.log(err));
-
-
-      res.status(200).send('logged');
   });
 
 app.use(express.static(__dirname + '/public'));

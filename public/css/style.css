@@ -4,12 +4,12 @@
 }
 
 body {
-    background-color: #4B4B55;
     width: 100vw;
     height: 100vh;
 }
 
 main {
+    background-color: #fff;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -38,4 +38,41 @@ button:hover {
 
 .inactive {
     display: none;
+}
+
+#content {
+    display: flex;
+    width: 100%;
+}
+
+.userProfile {
+    width: 50%;
+    align-self: center;
+    text-align: center;
+}
+
+.userProfile img {
+    border-radius: 20px;
+}
+
+.friends {
+    width: 50%;
+    padding: 20px;
+    border-left: 2px solid #F4324A;
+}
+
+.friend {
+    margin-bottom: 40px;
+}
+
+.friend img {
+    display: block;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.friend a {
+    display: block;
+    color: #FF516C;
+    text-decoration: none;
 }

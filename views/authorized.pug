@@ -1,0 +1,16 @@
+div.userProfile
+    -var userProfile = JSON.parse(profile)
+    img.avatar(src=userProfile._json.photo_200_orig)
+    h2=userProfile.displayName
+div.friends
+    each val in friends.items
+        div.friend
+            img(src=val.photo_50)
+            -var link = `https://vk.com/${val.domain}`;
+            a(href=link target="blank")
+                -var fullName = `${val.first_name} ${val.last_name}`
+                span=fullName
+
+
+           
+    
