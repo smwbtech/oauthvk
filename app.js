@@ -3,9 +3,13 @@ const express = require('express'),
       VKontakteStrategy = require('passport-vkontakte').Strategy,
       cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
-      expressSession = require('express-session');
+      expressSession = require('express-session'),
+      multer  = require('multer'),
+      Vkapi = require('node-vkapi');
 
-let app = express();
+let app = express(),
+    upload = multer();
+
 
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'pug');
@@ -36,8 +40,12 @@ passport.use(new VKontakteStrategy(
       // represent the logged-in user.  In a typical application, you would want
       // to associate the VK account with a user record in your database,
       // and return that user instead.
-      console.log(profile);
-      return done(null, profile);
+      let data = {
+          profile: profile,
+          accessToken: accessToken,
+          refreshToken: refreshToken
+      }
+      return done(null, data);
     });
   }
 ));
@@ -63,7 +71,29 @@ app.get('/auth/vk/callback',
   passport.authenticate('vkontakte', { failureRedirect: '/error' }),
   function(req, res) {
     console.log('Авторизовались!');
-    res.redirect('/');
+    console.log(req.user) //пользователь
+    res.render('logged', req.user);
+  });
+
+  app.post('/authorized', upload.array(), (req, res, err) => {
+      if(err) console.log(err);
+      console.log(req.body);
+      let token = req.body.accessToken,
+          vkapi = new Vkapi({
+              accessToken: token,
+          });
+
+          //TODO: получить список друзей пользователя!
+          vkapi.call('friends.get', {
+              order: 'random',
+              count: 5,
+              fields: 'nickname,domain,photo_50'
+          })
+          .then( (friends) => console.log(friends))
+          .catch( (err) => console.log(err));
+
+
+      res.status(200).send('logged');
   });
 
 app.use(express.static(__dirname + '/public'));

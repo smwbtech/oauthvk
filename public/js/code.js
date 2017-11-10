@@ -1,10 +1,18 @@
 window.onload = () => {
-    if(!localStorage.oauth) {
+    if(!localStorage.accessToken) {
         let authButton = document.getElementById('authButton');
         authButton.classList.toggle('inactive');
 
         //Авторизация по щелчку на кнопку
         authButton.addEventListener('click', authButtonHandler);
+    }
+
+    else {
+        let formData = new FormData();
+        formData.append('accessToken', localStorage.accessToken);
+        fetch('/authorized', {method: 'post', body: formData})
+        .then( (res) => console.log(res))
+        .catch( (err) => console.log(err));
     }
 
 

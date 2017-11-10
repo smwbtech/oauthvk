@@ -1,0 +1,8 @@
+include includes/head.pug
+
+main
+    img.avatar(src=profile._json.photo)
+script
+    != 'let profile =' + JSON.stringify(profile) +'; let accessToken = ' +JSON.stringify(accessToken) +'; localStorage.setItem("profile", profile); localStorage.setItem("accessToken", accessToken)'
+    
+    
