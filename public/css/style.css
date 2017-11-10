@@ -1,0 +1,41 @@
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #4B4B55;
+    width: 100vw;
+    height: 100vh;
+}
+
+main {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    display: block;
+    padding: 10px;
+    border: 2px solid #F4324A;
+    background: none;
+    text-align: center;
+    font-weight: bold;
+    color: #F4324A;
+    outline: none;
+    cursor: pointer;
+    opacity: .8;
+    -webkit-transition: opacity .2s ease-in-out;
+    -o-transition: opacity .2s ease-in-out;
+    transition: opacity .2s ease-in-out;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+.inactive {
+    display: none;
+}
