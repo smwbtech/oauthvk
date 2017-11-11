@@ -33,13 +33,7 @@ passport.use(new VKontakteStrategy(
   },
   function verify(accessToken, refreshToken, params, profile, done) {
 
-    // asynchronous verification, for effect...
     process.nextTick(function () {
-
-      // To keep the example simple, the user's VK profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the VK account with a user record in your database,
-      // and return that user instead.
       let data = {
           profile: profile,
           accessToken: accessToken,

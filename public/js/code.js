@@ -8,6 +8,7 @@ window.onload = () => {
     }
 
     else {
+        //Отравляем данные в формате FormData на сервер
         let formData = new FormData();
         formData.append('accessToken', localStorage.accessToken);
         formData.append('profile', localStorage.profile);
@@ -15,8 +16,9 @@ window.onload = () => {
         .then( (res) => {
             res.text()
             .then( (html) => {
-                let divContent = document.getElementById('content');
-                content.innerHTML = html;
+                let divContent = document.querySelector('.content');
+                divContent.classList.contains('inactive') ? divContent.classList.remove('inactive') : false;
+                divContent.innerHTML = html;
             })
         })
         .catch( (err) => console.log(err));

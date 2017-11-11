@@ -36,11 +36,7 @@ button:hover {
     opacity: 1;
 }
 
-.inactive {
-    display: none;
-}
-
-#content {
+.content {
     display: flex;
     width: 100%;
 }
@@ -75,4 +71,8 @@ button:hover {
     display: block;
     color: #FF516C;
     text-decoration: none;
+}
+
+.inactive {
+    display: none;
 }
