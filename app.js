@@ -1,57 +1,29 @@
 const express = require('express'),
       passport = require('passport'),
-      VKontakteStrategy = require('passport-vkontakte').Strategy,
-      cookieParser = require('cookie-parser'),
-      bodyParser = require('body-parser'),
+      vkStrategy = require('./passport/passport.js'),
       expressSession = require('express-session'),
       multer  = require('multer'),
-      Vkapi = require('node-vkapi');
+      Vkapi = require('node-vkapi'),
+      getFriends = require('./controllers/friends.js');
 
 let app = express(),
     upload = multer();
 
 
+console.log(getFriends);
+
+
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'pug');
 
+//Настроим passport и стратегию авторизации passport-vkontakte
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
-
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
-
-//Настроим стратегию авторизации passport-vkontakte
-passport.use(new VKontakteStrategy(
-  {
-    clientID: '6253665',
-    clientSecret: 'L21nWQJckiAE0PzdHsD8',
-    callbackURL: 'http://185.185.69.111/auth/vk/callback',
-    scope: ['email'],
-    profileFields: ['email,photo_200_orig'],
-  },
-  function verify(accessToken, refreshToken, params, profile, done) {
-
-    process.nextTick(function () {
-      let data = {
-          profile: profile,
-          accessToken: accessToken,
-          refreshToken: refreshToken
-      }
-      return done(null, data);
-    });
-  }
-));
-
-//Настройка express
-app.use(require('cookie-parser')());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.use(require('express-session')({ secret: 'put the secret here' }));
-
+passport.use(vkStrategy);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -65,56 +37,20 @@ app.get('/auth/vk', passport.authenticate('vkontakte'));
 app.get('/auth/vk/callback',
   passport.authenticate('vkontakte', { failureRedirect: '/error' }),
   (req, res) => {
-    console.log('Авторизовались!');
     // Cохраним объект пользователя и токен в переменной окружения, в реальном проекте будем сохранять в БД
     process.env.VK_USER = JSON.stringify(req.user.profile);
     process.env.VK_ACCESS_TOKEN = req.user.accessToken;
-    console.log(JSON.parse(process.env.VK_USER));
     res.status(301).redirect('/logged');
   });
 
   app.get('/logged', (req, res, err) => {
-      if(err) console.log(err)
-      let vkapi = new Vkapi({
-          accessToken: process.env.VK_ACCESS_TOKEN,
-      });
-      vkapi.call('friends.get', {
-          order: 'random',
-          count: 5,
-          fields: 'nickname,domain,photo_50'
-      })
-      .then( (friends) => {
-          console.log(friends);
-          res.render('logged', {
-              redirect: true,
-              profile: process.env.VK_USER,
-              accessToken: process.env.VK_ACCESS_TOKEN,
-              friends: friends});
-      })
-      .catch( (err) => console.log(err));
-      //Удалим объект пользователя и токен из переменной окружения
+      if(err) console.log(err);
+      getFriends(res, process.env.VK_ACCESS_TOKEN, process.env.VK_USER, 'logged');
   })
 
   app.post('/authorized', upload.array(), (req, res, err) => {
       if(err) console.log(err);
-      let token = req.body.accessToken,
-          profile = req.body.profile,
-          vkapi = new Vkapi({
-              accessToken: token,
-          });
-
-          vkapi.call('friends.get', {
-              order: 'random',
-              count: 5,
-              fields: 'nickname,domain,photo_50'
-          })
-          .then( (friends) => {
-              res.render('authorized', {
-                  profile: profile,
-                  accessToken: token,
-                  friends: friends});
-          })
-          .catch( (err) => console.log(err));
+      getFriends(res, req.body.accessToken, req.body.profile, 'authorized');
   });
 
 app.use(express.static(__dirname + '/public'));
@@ -134,5 +70,5 @@ app.use( (err, req, res, next) => {
 });
 
 app.listen(app.get('port'), () => {
-    console.log('Exptress is runnin on http//localhost' + app.get('port') + '; Press Cntl+C for ending!');
+    console.log('Server is running on http//localhost' + app.get('port') + '; Press Cntl+C for ending!');
 });

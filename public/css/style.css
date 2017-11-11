@@ -52,12 +52,17 @@ button:hover {
 }
 
 .friends {
-    width: 50%;
+    display: flex;
+    flex-flow: column;
+    width: 20%;
     padding: 20px;
     border-left: 2px solid #F4324A;
 }
 
 .friend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     margin-bottom: 40px;
 }
 
@@ -69,10 +74,39 @@ button:hover {
 
 .friend a {
     display: block;
+    text-align: center;
+    width: 50%;
+    margin: 0 25%;
     color: #FF516C;
     text-decoration: none;
 }
 
 .inactive {
     display: none;
+}
+
+@media (max-width: 1024px) {
+    h2 {
+        font-size: 2rem;
+    }
+    .content {
+        padding-top: 40px;
+        flex-direction: column;
+    }
+    .friends {
+        flex-flow: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 90%;
+        margin: 0 auto;
+        border: none;
+        border-top: 2px solid #F4324A;
+    }
+
+    .friend {
+        width: 30%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
 }
