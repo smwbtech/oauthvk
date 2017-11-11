@@ -27,7 +27,7 @@ passport.use(new VKontakteStrategy(
   {
     clientID: '6253665',
     clientSecret: 'L21nWQJckiAE0PzdHsD8',
-    callbackURL: 'http://localhost:3000/auth/vk/callback',
+    callbackURL: 'http://185.185.69.111/auth/vk/callback',
     scope: ['email'],
     profileFields: ['email,photo_200_orig'],
   },
