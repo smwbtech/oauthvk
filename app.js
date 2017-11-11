@@ -98,6 +98,7 @@ app.get('/auth/vk/callback',
   app.post('/authorized', upload.array(), (req, res, err) => {
       if(err) console.log(err);
       let token = req.body.accessToken,
+          profile = req.body.profile,
           vkapi = new Vkapi({
               accessToken: token,
           });
@@ -109,8 +110,8 @@ app.get('/auth/vk/callback',
           })
           .then( (friends) => {
               res.render('authorized', {
-                  profile: process.env.VK_USER,
-                  accessToken: process.env.VK_ACCESS_TOKEN,
+                  profile: profile,
+                  accessToken: token,
                   friends: friends});
           })
           .catch( (err) => console.log(err));
